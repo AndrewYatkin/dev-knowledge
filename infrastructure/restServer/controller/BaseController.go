@@ -1,8 +1,10 @@
 package restServerController
 
 import (
+	"context"
 	"dev-knowledge/infrastructure/errors"
 	loggerInterface "dev-knowledge/infrastructure/logger/interface"
+	"dev-knowledge/infrastructure/restServer"
 	restServerInterface "dev-knowledge/infrastructure/restServer/interface"
 	"dev-knowledge/infrastructure/restServer/response"
 	"io"
@@ -50,6 +52,23 @@ func (bc *BaseController) GetReqBody(r *http.Request) ([]byte, error) {
 		return nil, response.ErrUnmarshalRequest("Request body is nil")
 	}
 	return io.ReadAll(r.Body)
+}
+
+func GetRouteParamFromCtx(ctx context.Context, key string) (string, error) {
+	paramsInterface := ctx.Value(restServer.RequestParamsKey)
+	if paramsInterface == nil {
+		return "", ErrURLParamsIsEmpty
+	}
+	parsedParams, ok := paramsInterface.(map[string]string)
+	if !ok {
+		return "", ErrParseURLParams
+	}
+
+	val, ok := parsedParams[key]
+	if !ok {
+		return "", ErrParameterNotFoundByKey(key)
+	}
+	return val, nil
 }
 
 func (bc *BaseController) Response(w http.ResponseWriter, r *http.Request, result []byte, responseCode int) {

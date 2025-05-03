@@ -1,6 +1,7 @@
 package restServer
 
 import (
+	"context"
 	loggerInterface "dev-knowledge/infrastructure/logger/interface"
 	restServerInterface "dev-knowledge/infrastructure/restServer/interface"
 	middleware "dev-knowledge/infrastructure/restServer/middleware"
@@ -8,6 +9,10 @@ import (
 	"github.com/valyala/fasthttp/fasthttpadaptor"
 	"net/http"
 )
+
+type ctxKey string
+
+const RequestParamsKey ctxKey = "requestParams"
 
 type FiberServer struct {
 	server *fiber.App
@@ -61,7 +66,20 @@ func (s *FiberServer) Start(address string) error {
 
 func httpHandlerFuncToFiberHandler(handler http.HandlerFunc) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		fasthttpadaptor.NewFastHTTPHandlerFunc(handler)(c.Context())
+		req := new(http.Request)
+		err := fasthttpadaptor.ConvertRequest(c.Context(), req, true)
+		if err != nil {
+			return err
+		}
+
+		params := c.AllParams()
+		ctx := context.WithValue(req.Context(), RequestParamsKey, params)
+		req = req.WithContext(ctx)
+
+		rw := &ResponseWriter{c: c}
+
+		handler(rw, req)
+
 		return nil
 	}
 }

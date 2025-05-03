@@ -36,3 +36,25 @@ func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	c.JSONResponse(w, r, response, http.StatusCreated)
 }
+
+func (c *UserController) GetUserById(w http.ResponseWriter, r *http.Request) {
+	userID, err := restServerController.GetRouteParamFromCtx(r.Context(), "userID")
+	if err != nil {
+		c.ErrorResponse(w, r, err)
+		return
+	}
+
+	createdUser, err := c.userUseCase.GetUserByID(r.Context(), userID)
+	if err != nil {
+		c.ErrorResponse(w, r, err)
+		return
+	}
+
+	response, err := serializer.SerializeUser(createdUser)
+	if err != nil {
+		c.ErrorResponse(w, r, err)
+		return
+	}
+
+	c.JSONResponse(w, r, response, http.StatusCreated)
+}

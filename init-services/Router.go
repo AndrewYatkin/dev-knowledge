@@ -26,4 +26,5 @@ func NewUserRouter(
 
 func (r *UserRouter) RegisterRoutes() {
 	r.server.RegisterPublicRoute("POST", "/user/create", r.controller.CreateUser)
+	r.server.RegisterPublicRoute("GET", "/user/:userID", r.controller.GetUserById)
 }
