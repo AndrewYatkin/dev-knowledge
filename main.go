@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	userRepo "dev-knowledge/adapters/controllers/repository"
 	userRest "dev-knowledge/adapters/controllers/rest"
 	userUseCase "dev-knowledge/domain/useCase"
 	"dev-knowledge/infrastructure/logger"
@@ -12,12 +13,21 @@ import (
 	"fmt"
 )
 
-const ServicePort = ":8080"
+const ServicePort = ":8081"
 
 func main() {
 	lightLogger := logger.NewLightLogger()
 	server := restServer.NewFiberServer(lightLogger)
-	useCase := userUseCase.NewUserUseCase()
+	userRepoDummy, err := userRepo.NewBuilder().Logger(lightLogger).Build()
+	if err != nil {
+		stopService(lightLogger, err)
+		return
+	}
+	useCase, err := userUseCase.NewBuilder().UserRepo(userRepoDummy).Build()
+	if err != nil {
+		stopService(lightLogger, err)
+		return
+	}
 	errRespService, err := response.NewErrorResponseService(response.NewErrorResolver(), lightLogger)
 	if err != nil {
 		stopService(lightLogger, err)
