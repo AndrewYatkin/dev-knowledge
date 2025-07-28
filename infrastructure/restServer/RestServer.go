@@ -76,7 +76,7 @@ func httpHandlerFuncToFiberHandler(handler http.HandlerFunc) fiber.Handler {
 		ctx := context.WithValue(req.Context(), RequestParamsKey, params)
 		req = req.WithContext(ctx)
 
-		rw := &ResponseWriter{c: c}
+		rw := &ResponseWriter{ctx: c}
 
 		handler(rw, req)
 

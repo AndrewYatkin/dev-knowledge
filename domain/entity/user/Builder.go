@@ -1,11 +1,11 @@
 package userEntity
 
 import (
-	agreementEntity "dev-knowledge/domain/entity/agreement"
-	emailEntity "dev-knowledge/domain/entity/email"
-	passwordEntity "dev-knowledge/domain/entity/password"
-	profileEntity "dev-knowledge/domain/entity/profile"
-	"dev-knowledge/domain/entity/spec"
+	"dev-knowledge/domain/entity/user/agreement"
+	"dev-knowledge/domain/entity/user/email"
+	"dev-knowledge/domain/entity/user/password"
+	"dev-knowledge/domain/entity/user/profile"
+	"dev-knowledge/domain/entity/user/spec"
 	"dev-knowledge/infrastructure/errors"
 	commonTime "dev-knowledge/infrastructure/tools/time"
 )

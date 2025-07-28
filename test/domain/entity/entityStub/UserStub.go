@@ -1,10 +1,10 @@
 package entityStub
 
 import (
-	agreementEntity "dev-knowledge/domain/entity/agreement"
-	profileEntity "dev-knowledge/domain/entity/profile"
-	"dev-knowledge/domain/entity/spec"
 	userEntity "dev-knowledge/domain/entity/user"
+	"dev-knowledge/domain/entity/user/agreement"
+	"dev-knowledge/domain/entity/user/profile"
+	"dev-knowledge/domain/entity/user/spec"
 	commonTime "dev-knowledge/infrastructure/tools/time"
 )
 

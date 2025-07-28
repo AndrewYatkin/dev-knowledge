@@ -1,9 +1,11 @@
 package entityStub
 
-import profileEntity "dev-knowledge/domain/entity/profile"
+import (
+	profileEntity2 "dev-knowledge/domain/entity/user/profile"
+)
 
-func GetFullProfile() *profileEntity.Profile {
-	return profileEntity.NewBuilder().
+func GetFullProfile() *profileEntity2.Profile {
+	return profileEntity2.NewBuilder().
 		FirstName("FirstName").
 		LastName("LastName").
 		Patronymic("Patronymic").

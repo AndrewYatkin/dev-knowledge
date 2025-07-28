@@ -3,7 +3,7 @@ package entityStub
 import (
 	emailPrimitive "dev-knowledge/common/domainPrimitive/primitive/email"
 	emailPrimitiveStub "dev-knowledge/common/domainPrimitive/test/testDouble/stub/email"
-	emailEntity "dev-knowledge/domain/entity/email"
+	"dev-knowledge/domain/entity/user/email"
 )
 
 func GetNonActivatedUserEmails() *emailEntity.UserEmails {

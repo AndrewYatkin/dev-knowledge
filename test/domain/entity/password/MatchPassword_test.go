@@ -1,7 +1,7 @@
 package passwordEntityTest
 
 import (
-	passwordEntity "dev-knowledge/domain/entity/password"
+	passwordEntity2 "dev-knowledge/domain/entity/user/password"
 	"dev-knowledge/test/domain/entity/entityStub"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -22,12 +22,12 @@ func TestPasswordMatchShould(t *testing.T) {
 func (s *MatchPasswordShould) TestMatchPassword_PasswordIsEmpty_ReturnError() {
 	globalSalt := entityStub.GetPasswordGlobalSalt()
 
-	password, err := passwordEntity.NewPassword("123password", globalSalt)
+	password, err := passwordEntity2.NewPassword("123password", globalSalt)
 	assert.NoError(s.T(), err)
 	require.NotNil(s.T(), password)
 
 	err = password.MatchPassword("", globalSalt)
-	assert.ErrorIs(s.T(), err, passwordEntity.ErrPlainTextPasswordIsRequired)
+	assert.ErrorIs(s.T(), err, passwordEntity2.ErrPlainTextPasswordIsRequired)
 }
 
 func (s *MatchPasswordShould) TestMatchPassword_GlobalSaltIsEmpty_ReturnError() {
@@ -36,18 +36,18 @@ func (s *MatchPasswordShould) TestMatchPassword_GlobalSaltIsEmpty_ReturnError() 
 	password := entityStub.GetPasswordWith(plainTextPassword)
 
 	err := password.MatchPassword(plainTextPassword, "")
-	assert.ErrorIs(s.T(), err, passwordEntity.ErrGlobalSaltIsRequired)
+	assert.ErrorIs(s.T(), err, passwordEntity2.ErrGlobalSaltIsRequired)
 }
 
 func (s *MatchPasswordShould) TestMatchPassword_MismatchedPassword_ReturnError() {
 	globalSalt := entityStub.GetPasswordGlobalSalt()
 
-	password, err := passwordEntity.NewPassword("123password", globalSalt)
+	password, err := passwordEntity2.NewPassword("123password", globalSalt)
 	assert.NoError(s.T(), err)
 	require.NotNil(s.T(), password)
 
 	err = password.MatchPassword("999", globalSalt)
-	assert.ErrorIs(s.T(), err, passwordEntity.ErrMismatchedPassword)
+	assert.ErrorIs(s.T(), err, passwordEntity2.ErrMismatchedPassword)
 }
 
 func (s *MatchPasswordShould) TestMatchPassword_MismatchedGlobalSalt_ReturnError() {
@@ -56,14 +56,14 @@ func (s *MatchPasswordShould) TestMatchPassword_MismatchedGlobalSalt_ReturnError
 	password := entityStub.GetPasswordWith(plainTextPassword)
 
 	err := password.MatchPassword(plainTextPassword, entityStub.GetPasswordGlobalSalt())
-	assert.ErrorIs(s.T(), err, passwordEntity.ErrMismatchedPassword)
+	assert.ErrorIs(s.T(), err, passwordEntity2.ErrMismatchedPassword)
 }
 
 func (s *MatchPasswordShould) TestMatchPassword_EqualPasswords_ReturnNoError() {
 	plainTextPassword := "123password"
 	globalSalt := entityStub.GetPasswordGlobalSalt()
 
-	password, err := passwordEntity.NewPassword(plainTextPassword, globalSalt)
+	password, err := passwordEntity2.NewPassword(plainTextPassword, globalSalt)
 	assert.NoError(s.T(), err)
 	require.NotNil(s.T(), password)
 
@@ -75,7 +75,7 @@ func (s *MatchPasswordShould) TestMatchPassword_PasswordWithSpaces_ReturnNoError
 	plainTextPassword := "    123password    "
 	globalSalt := entityStub.GetPasswordGlobalSalt()
 
-	password, err := passwordEntity.NewPassword(plainTextPassword, globalSalt)
+	password, err := passwordEntity2.NewPassword(plainTextPassword, globalSalt)
 	assert.NoError(s.T(), err)
 	require.NotNil(s.T(), password)
 

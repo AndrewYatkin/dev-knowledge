@@ -1,7 +1,7 @@
 package agreement
 
 import (
-	agreementEntity "dev-knowledge/domain/entity/agreement"
+	agreementEntity2 "dev-knowledge/domain/entity/user/agreement"
 	"dev-knowledge/infrastructure/errors"
 	commonTime "dev-knowledge/infrastructure/tools/time"
 	"github.com/stretchr/testify/assert"
@@ -19,7 +19,7 @@ func TestAgreementBuilderShould(t *testing.T) {
 }
 
 func (s *AgreementBuilderShould) TestBuild_WithoutParams_ReturnWithDefaultValues() {
-	actualAgreement, err := agreementEntity.NewBuilder().Build()
+	actualAgreement, err := agreementEntity2.NewBuilder().Build()
 
 	assert.Nil(s.T(), err)
 	assert.NotNil(s.T(), actualAgreement)
@@ -30,7 +30,7 @@ func (s *AgreementBuilderShould) TestBuild_WithoutParams_ReturnWithDefaultValues
 func (s *AgreementBuilderShould) TestBuild_UnsupportedDateForNotAccepted_ReturnError() {
 	expectedAcceptedDate := commonTime.FromUnixNano(999987654321)
 
-	actualAgreement, err := agreementEntity.NewBuilder().
+	actualAgreement, err := agreementEntity2.NewBuilder().
 		Accepted(false).
 		AcceptedDate(expectedAcceptedDate).
 		Build()
@@ -41,11 +41,11 @@ func (s *AgreementBuilderShould) TestBuild_UnsupportedDateForNotAccepted_ReturnE
 	errValue, ok := err.(*errors.Errors)
 	assert.True(s.T(), ok)
 	assert.EqualValues(s.T(), 1, errValue.Size())
-	assert.True(s.T(), errValue.Contains(agreementEntity.ErrUnsupportedDateForNotAccepted))
+	assert.True(s.T(), errValue.Contains(agreementEntity2.ErrUnsupportedDateForNotAccepted))
 }
 
 func (s *AgreementBuilderShould) TestBuild_AcceptWithoutDate_ReturnError() {
-	actualAgreement, err := agreementEntity.NewBuilder().
+	actualAgreement, err := agreementEntity2.NewBuilder().
 		Accepted(true).
 		AcceptedDate(nil).
 		Build()
@@ -56,13 +56,13 @@ func (s *AgreementBuilderShould) TestBuild_AcceptWithoutDate_ReturnError() {
 	errValue, ok := err.(*errors.Errors)
 	assert.True(s.T(), ok)
 	assert.EqualValues(s.T(), 1, errValue.Size())
-	assert.True(s.T(), errValue.Contains(agreementEntity.ErrAcceptedDateIsRequired))
+	assert.True(s.T(), errValue.Contains(agreementEntity2.ErrAcceptedDateIsRequired))
 }
 
 func (s *AgreementBuilderShould) TestBuild_AllParams_ReturnAgreement() {
 	expectedAcceptedDate := commonTime.FromUnixNano(999987654321)
 
-	actualAgreement, err := agreementEntity.NewBuilder().
+	actualAgreement, err := agreementEntity2.NewBuilder().
 		Accepted(true).
 		AcceptedDate(expectedAcceptedDate).
 		Build()

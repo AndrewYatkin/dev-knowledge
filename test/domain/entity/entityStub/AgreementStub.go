@@ -1,12 +1,12 @@
 package entityStub
 
 import (
-	agreementEntity "dev-knowledge/domain/entity/agreement"
+	agreementEntity2 "dev-knowledge/domain/entity/user/agreement"
 	commonTime "dev-knowledge/infrastructure/tools/time"
 )
 
-func GetEmptyAgreement() *agreementEntity.Agreement {
-	agreement, err := agreementEntity.NewAgreement()
+func GetEmptyAgreement() *agreementEntity2.Agreement {
+	agreement, err := agreementEntity2.NewAgreement()
 	if err != nil {
 		panic(err)
 	}
@@ -14,8 +14,8 @@ func GetEmptyAgreement() *agreementEntity.Agreement {
 	return agreement
 }
 
-func GetAgreement() *agreementEntity.Agreement {
-	agreement, err := agreementEntity.NewBuilder().
+func GetAgreement() *agreementEntity2.Agreement {
+	agreement, err := agreementEntity2.NewBuilder().
 		Accepted(true).
 		AcceptedDate(commonTime.Now()).
 		Build()

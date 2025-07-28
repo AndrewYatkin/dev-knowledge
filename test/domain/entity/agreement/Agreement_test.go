@@ -1,7 +1,7 @@
 package agreement
 
 import (
-	agreementEntity "dev-knowledge/domain/entity/agreement"
+	"dev-knowledge/domain/entity/user/agreement"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"testing"

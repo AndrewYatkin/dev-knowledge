@@ -3,16 +3,16 @@ package entityStub
 import (
 	emailPrimitive "dev-knowledge/common/domainPrimitive/primitive/email"
 	verificationPrimitive "dev-knowledge/common/domainPrimitive/primitive/verification"
-	emailEntity "dev-knowledge/domain/entity/email"
+	emailEntity2 "dev-knowledge/domain/entity/user/email"
 )
 
-func GetUserEmailWithoutVerify(emailStr string) *emailEntity.UserEmail {
+func GetUserEmailWithoutVerify(emailStr string) *emailEntity2.UserEmail {
 	email, err := emailPrimitive.EmailFrom(emailStr)
 	if err != nil {
 		panic(err)
 	}
 
-	userEmail, err := emailEntity.NewBuilder().
+	userEmail, err := emailEntity2.NewBuilder().
 		Email(email).
 		Build()
 
@@ -23,7 +23,7 @@ func GetUserEmailWithoutVerify(emailStr string) *emailEntity.UserEmail {
 	return userEmail
 }
 
-func GetUserEmailWithVerify(emailStr string, verificationCodeStr string) *emailEntity.UserEmail {
+func GetUserEmailWithVerify(emailStr string, verificationCodeStr string) *emailEntity2.UserEmail {
 	email, err := emailPrimitive.EmailFrom(emailStr)
 	if err != nil {
 		panic(err)
@@ -34,7 +34,7 @@ func GetUserEmailWithVerify(emailStr string, verificationCodeStr string) *emailE
 		panic(err)
 	}
 
-	userEmail, err := emailEntity.NewBuilder().
+	userEmail, err := emailEntity2.NewBuilder().
 		Email(email).
 		VerificationCode(verificationCode).
 		Build()

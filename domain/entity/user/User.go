@@ -2,11 +2,11 @@ package userEntity
 
 import (
 	emailPrimitive "dev-knowledge/common/domainPrimitive/primitive/email"
-	agreementEntity "dev-knowledge/domain/entity/agreement"
-	emailEntity "dev-knowledge/domain/entity/email"
-	passwordEntity "dev-knowledge/domain/entity/password"
-	profileEntity "dev-knowledge/domain/entity/profile"
-	"dev-knowledge/domain/entity/spec"
+	"dev-knowledge/domain/entity/user/agreement"
+	"dev-knowledge/domain/entity/user/email"
+	passwordEntity2 "dev-knowledge/domain/entity/user/password"
+	"dev-knowledge/domain/entity/user/profile"
+	"dev-knowledge/domain/entity/user/spec"
 	commonTime "dev-knowledge/infrastructure/tools/time"
 )
 
@@ -14,7 +14,7 @@ type User struct {
 	id          *UserID
 	profile     *profileEntity.Profile
 	role        spec.UserRole
-	password    *passwordEntity.Password
+	password    *passwordEntity2.Password
 	email       *emailEntity.UserEmails
 	agreement   *agreementEntity.Agreement
 	lastLoginAt *commonTime.Time
@@ -67,8 +67,8 @@ func (u *User) SetPatronymic(name string) {
 	u.profile.SetPatronymic(name)
 }
 
-func (u *User) SetPassword(plainTextPassword string, globalSalt passwordEntity.Salt) error {
-	password, err := passwordEntity.NewPassword(plainTextPassword, globalSalt)
+func (u *User) SetPassword(plainTextPassword string, globalSalt passwordEntity2.Salt) error {
+	password, err := passwordEntity2.NewPassword(plainTextPassword, globalSalt)
 	if err != nil {
 		return err
 	}
@@ -97,7 +97,7 @@ func (u *User) ActivateEmail(verificationCode string) error {
 	return u.email.Activate(verificationCode)
 }
 
-func (u *User) MatchPassword(plainTextPassword string, globalSalt passwordEntity.Salt) error {
+func (u *User) MatchPassword(plainTextPassword string, globalSalt passwordEntity2.Salt) error {
 	if u.password == nil {
 		return ErrPasswordIsRequired
 	}
@@ -128,9 +128,9 @@ func (u *User) NonActivatedEmail() (e emailPrimitive.Email, exists bool) {
 	return u.email.NonActivatedEmail(), true
 }
 
-func (u *User) Password() (p passwordEntity.Password, exists bool) {
+func (u *User) Password() (p passwordEntity2.Password, exists bool) {
 	if u.password == nil {
-		return passwordEntity.Password{}, false
+		return passwordEntity2.Password{}, false
 	}
 	return *u.password, true
 }

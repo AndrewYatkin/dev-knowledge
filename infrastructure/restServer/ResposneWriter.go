@@ -6,7 +6,7 @@ import (
 )
 
 type ResponseWriter struct {
-	c           *fiber.Ctx
+	ctx         *fiber.Ctx
 	header      http.Header
 	statusCode  int
 	wroteHeader bool
@@ -23,7 +23,7 @@ func (w *ResponseWriter) Write(data []byte) (int, error) {
 	if !w.wroteHeader {
 		w.writeHeader()
 	}
-	return w.c.Write(data)
+	return w.ctx.Write(data)
 }
 
 func (w *ResponseWriter) WriteHeader(statusCode int) {
@@ -33,14 +33,14 @@ func (w *ResponseWriter) WriteHeader(statusCode int) {
 
 func (w *ResponseWriter) writeHeader() {
 	if w.statusCode != 0 {
-		w.c.Status(w.statusCode)
+		w.ctx.Status(w.statusCode)
 	} else {
-		w.c.Status(http.StatusOK)
+		w.ctx.Status(http.StatusOK)
 	}
 
 	for k, vv := range w.header {
 		for _, v := range vv {
-			w.c.Response().Header.Add(k, v)
+			w.ctx.Response().Header.Add(k, v)
 		}
 	}
 	w.wroteHeader = true

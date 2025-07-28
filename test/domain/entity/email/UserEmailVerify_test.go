@@ -2,7 +2,7 @@ package email
 
 import (
 	verificationPrimitive "dev-knowledge/common/domainPrimitive/primitive/verification"
-	emailEntity "dev-knowledge/domain/entity/email"
+	"dev-knowledge/domain/entity/user/email"
 	"dev-knowledge/test/domain/entity/entityStub"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"

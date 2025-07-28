@@ -3,7 +3,7 @@ package email
 import (
 	emailPrimitive "dev-knowledge/common/domainPrimitive/primitive/email"
 	emailPrimitiveStub "dev-knowledge/common/domainPrimitive/test/testDouble/stub/email"
-	emailEntity "dev-knowledge/domain/entity/email"
+	emailEntity2 "dev-knowledge/domain/entity/user/email"
 	"dev-knowledge/infrastructure/errors"
 	commonTime "dev-knowledge/infrastructure/tools/time"
 	"dev-knowledge/test/domain/entity/entityStub"
@@ -22,20 +22,20 @@ func TestUserEmailShould(t *testing.T) {
 }
 
 func (s *UserEmailBuilderShould) TestBuild_ParamsNotGiven_ReturnError() {
-	actualUserEmail, err := emailEntity.NewBuilder().Build()
+	actualUserEmail, err := emailEntity2.NewBuilder().Build()
 
 	assert.NotNil(s.T(), err)
 	assert.Nil(s.T(), actualUserEmail)
 
 	errs, ok := err.(*errors.Errors)
 	assert.True(s.T(), ok)
-	assert.True(s.T(), errs.Contains(emailEntity.ErrEmailIsRequired))
+	assert.True(s.T(), errs.Contains(emailEntity2.ErrEmailIsRequired))
 }
 
 func (s *UserEmailBuilderShould) TestBuild_EmptyEmail_ReturnErrEmailRequired() {
 	emptyEmail := emailPrimitive.Email("")
 
-	actualUserEmail, err := emailEntity.NewBuilder().
+	actualUserEmail, err := emailEntity2.NewBuilder().
 		Email(emptyEmail).
 		Build()
 
@@ -44,16 +44,16 @@ func (s *UserEmailBuilderShould) TestBuild_EmptyEmail_ReturnErrEmailRequired() {
 
 	errs, ok := err.(*errors.Errors)
 	assert.True(s.T(), ok)
-	assert.True(s.T(), errs.Contains(emailEntity.ErrEmailIsRequired))
+	assert.True(s.T(), errs.Contains(emailEntity2.ErrEmailIsRequired))
 }
 
 func (s *UserEmailBuilderShould) TestBuild_AllParams_ReturnUserEmailNoErr() {
-	expectedID := emailEntity.NewEmailID()
+	expectedID := emailEntity2.NewEmailID()
 	expectedEmail := emailPrimitiveStub.GetEmail()
 	expectedCreatedAt := commonTime.Now()
 	expectedVerificationCode := entityStub.GetVerificationCode()
 
-	actualUserEmail, err := emailEntity.NewBuilder().
+	actualUserEmail, err := emailEntity2.NewBuilder().
 		ID(expectedID).
 		Email(expectedEmail).
 		VerificationCode(expectedVerificationCode).
@@ -71,7 +71,7 @@ func (s *UserEmailBuilderShould) TestBuild_AllParams_ReturnUserEmailNoErr() {
 func (s *UserEmailBuilderShould) TestBuild_OnlyRequiredParams_ReturnUserEmailWithDefaultValues() {
 	expectedEmail := emailPrimitiveStub.GetEmail()
 
-	actualUserEmail, err := emailEntity.NewBuilder().
+	actualUserEmail, err := emailEntity2.NewBuilder().
 		Email(expectedEmail).
 		Build()
 

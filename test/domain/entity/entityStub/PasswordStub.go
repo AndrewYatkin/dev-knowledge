@@ -1,7 +1,7 @@
 package entityStub
 
 import (
-	passwordEntity "dev-knowledge/domain/entity/password"
+	passwordEntity2 "dev-knowledge/domain/entity/user/password"
 	commonTesting "dev-knowledge/infrastructure/testing"
 	"fmt"
 )
@@ -15,12 +15,12 @@ func GetRandomPlainTextPassword() string {
 	return fmt.Sprintf("abc%d", commonTesting.RandomNumber(minRandomPasswordLength, maxRandomPasswordLength))
 }
 
-func GetPassword() *passwordEntity.Password {
+func GetPassword() *passwordEntity2.Password {
 	return GetPasswordWith(GetRandomPlainTextPassword())
 }
 
-func GetPasswordWith(plainTextPassword string) *passwordEntity.Password {
-	password, err := passwordEntity.NewPassword(plainTextPassword, GetPasswordGlobalSalt())
+func GetPasswordWith(plainTextPassword string) *passwordEntity2.Password {
+	password, err := passwordEntity2.NewPassword(plainTextPassword, GetPasswordGlobalSalt())
 	if err != nil {
 		panic(err)
 	}
@@ -28,14 +28,14 @@ func GetPasswordWith(plainTextPassword string) *passwordEntity.Password {
 	return password
 }
 
-func GetPasswordBuilder() *passwordEntity.Builder {
-	return passwordEntity.NewBuilder().
+func GetPasswordBuilder() *passwordEntity2.Builder {
+	return passwordEntity2.NewBuilder().
 		Hash(GetPasswordHash()).
 		Salt(GetPasswordGlobalSalt())
 }
 
-func GetPasswordHash() passwordEntity.Hash {
-	hash, err := passwordEntity.NewHash(commonTesting.RandomDefaultStr())
+func GetPasswordHash() passwordEntity2.Hash {
+	hash, err := passwordEntity2.NewHash(commonTesting.RandomDefaultStr())
 	if err != nil {
 		panic(err)
 	}
@@ -43,6 +43,6 @@ func GetPasswordHash() passwordEntity.Hash {
 	return hash
 }
 
-func GetPasswordGlobalSalt() passwordEntity.Salt {
-	return passwordEntity.NewSalt()
+func GetPasswordGlobalSalt() passwordEntity2.Salt {
+	return passwordEntity2.NewSalt()
 }

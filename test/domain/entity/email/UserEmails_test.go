@@ -2,7 +2,7 @@ package email
 
 import (
 	emailPrimitive "dev-knowledge/common/domainPrimitive/primitive/email"
-	emailEntity "dev-knowledge/domain/entity/email"
+	emailEntity2 "dev-knowledge/domain/entity/user/email"
 	"dev-knowledge/test/domain/entity/entityStub"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -23,7 +23,7 @@ func (s *UserEmailsShould) TestInitNewEmail_ValidEmail_ReturnNonActivated() {
 	expectedEmail, err := emailPrimitive.EmailFrom(expectedEmailStr)
 	assert.Nil(s.T(), err)
 
-	actualUserEmails, err := emailEntity.NewEmails(expectedEmail)
+	actualUserEmails, err := emailEntity2.NewEmails(expectedEmail)
 
 	assert.Nil(s.T(), err)
 	assert.NotNil(s.T(), actualUserEmails)
@@ -43,17 +43,17 @@ func (s *UserEmailsShould) TestInitNewEmail_ValidEmail_ReturnNonActivated() {
 func (s *UserEmailsShould) TestInitNewEmail_NotValidEmail_ReturnError() {
 	notValidEmail := emailPrimitive.Email("")
 
-	actualUserEmails, err := emailEntity.NewEmails(notValidEmail)
+	actualUserEmails, err := emailEntity2.NewEmails(notValidEmail)
 	assert.Nil(s.T(), actualUserEmails)
 	assert.NotNil(s.T(), err)
 }
 
 func (s *UserEmailsShould) TestGenerateActivationCode_NonActivatedNotExist_ReturnError() {
-	actualUserEmails := emailEntity.UserEmails{}
+	actualUserEmails := emailEntity2.UserEmails{}
 
 	code, err := actualUserEmails.GenerateActivationCode()
 	assert.Empty(s.T(), code)
-	assert.Equal(s.T(), emailEntity.ErrNonActivatedEmailNotExist, err)
+	assert.Equal(s.T(), emailEntity2.ErrNonActivatedEmailNotExist, err)
 }
 
 func (s *UserEmailsShould) TestGenerateActivationCode_NonActivatedExist_ReturnCodeNoErr() {
@@ -61,7 +61,7 @@ func (s *UserEmailsShould) TestGenerateActivationCode_NonActivatedExist_ReturnCo
 	userEmail, err := emailPrimitive.EmailFrom(emailStr)
 	assert.Nil(s.T(), err)
 
-	actualUserEmails, err := emailEntity.NewEmails(userEmail)
+	actualUserEmails, err := emailEntity2.NewEmails(userEmail)
 	assert.NotNil(s.T(), actualUserEmails)
 	assert.Nil(s.T(), err)
 
@@ -77,7 +77,7 @@ func (s *UserEmailsShould) TestGenerateActivationCode_TimeoutNotExpired_ReturnEr
 
 	code, err := emailsStub.GenerateActivationCode()
 	assert.Empty(s.T(), code)
-	assert.Equal(s.T(), emailEntity.ErrTimeoutHasNotExpired, err)
+	assert.Equal(s.T(), emailEntity2.ErrTimeoutHasNotExpired, err)
 }
 
 func (s *UserEmailsShould) TestActivate_ExistsNonActivatedEmail_EmailIsActivated() {
@@ -85,7 +85,7 @@ func (s *UserEmailsShould) TestActivate_ExistsNonActivatedEmail_EmailIsActivated
 	userEmail, err := emailPrimitive.EmailFrom(emailStr)
 	assert.Nil(s.T(), err)
 
-	actualUserEmails, err := emailEntity.NewEmails(userEmail)
+	actualUserEmails, err := emailEntity2.NewEmails(userEmail)
 	assert.NotNil(s.T(), actualUserEmails)
 	assert.Nil(s.T(), err)
 
@@ -110,11 +110,11 @@ func (s *UserEmailsShould) TestActivate_ExistsNonActivatedEmail_EmailIsActivated
 }
 
 func (s *UserEmailsShould) TestActivate_NonActivatedEmailNotExist_ReturnError() {
-	actualUserEmails := emailEntity.UserEmails{}
+	actualUserEmails := emailEntity2.UserEmails{}
 
 	err := actualUserEmails.Activate("123")
 	assert.NotNil(s.T(), err)
-	assert.Equal(s.T(), emailEntity.ErrNonActivatedEmailNotExist, err)
+	assert.Equal(s.T(), emailEntity2.ErrNonActivatedEmailNotExist, err)
 }
 
 func (s *UserEmailsShould) TestObjInitNewEmail_ValidEmail_ReturnNotActivated() {
