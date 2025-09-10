@@ -4,6 +4,7 @@ import (
 	userRestRequest "dev-knowledge/adapters/controllers/rest/request"
 	"dev-knowledge/adapters/controllers/rest/serializer"
 	usecaseInterface "dev-knowledge/boundary/domain/usecase"
+	"dev-knowledge/infrastructure/jwtService"
 	loggerInterface "dev-knowledge/infrastructure/logger/interface"
 	restServerController "dev-knowledge/infrastructure/restServer/controller"
 	"net/http"
@@ -38,13 +39,19 @@ func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *UserController) GetUserById(w http.ResponseWriter, r *http.Request) {
-	userID, err := restServerController.GetRouteParamFromCtx(r.Context(), "userID")
+	executorRole, err := c.GetStrParamFromCtx(r.Context(), jwtService.UserRoleKey)
 	if err != nil {
 		c.ErrorResponse(w, r, err)
 		return
 	}
 
-	createdUser, err := c.userUseCase.GetUserByID(r.Context(), userID)
+	userID, err := c.GetRouteParamFromCtx(r.Context(), "userID")
+	if err != nil {
+		c.ErrorResponse(w, r, err)
+		return
+	}
+
+	createdUser, err := c.userUseCase.GetUserByID(r.Context(), userID, executorRole)
 	if err != nil {
 		c.ErrorResponse(w, r, err)
 		return
@@ -57,4 +64,26 @@ func (c *UserController) GetUserById(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c.JSONResponse(w, r, response, http.StatusCreated)
+}
+
+func (c *UserController) Me(w http.ResponseWriter, r *http.Request) {
+	executorUserID, err := c.GetStrParamFromCtx(r.Context(), jwtService.UserIDKey)
+	if err != nil {
+		c.ErrorResponse(w, r, err)
+		return
+	}
+
+	user, err := c.userUseCase.GetMe(r.Context(), executorUserID)
+	if err != nil {
+		c.ErrorResponse(w, r, err)
+		return
+	}
+
+	response, err := serializer.SerializeUser(user)
+	if err != nil {
+		c.ErrorResponse(w, r, err)
+		return
+	}
+
+	c.JSONResponse(w, r, response, http.StatusOK)
 }

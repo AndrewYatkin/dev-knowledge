@@ -3,6 +3,7 @@ package initServices
 import (
 	userRest "dev-knowledge/adapters/controllers/rest"
 	restServerInterface "dev-knowledge/infrastructure/restServer/interface"
+	"net/http"
 )
 
 type Router interface {
@@ -25,6 +26,7 @@ func NewUserRouter(
 }
 
 func (r *UserRouter) RegisterRoutes() {
-	r.server.RegisterPublicRoute("POST", "/user/create", r.controller.CreateUser)
-	r.server.RegisterPublicRoute("GET", "/user/:userID", r.controller.GetUserById)
+	r.server.RegisterPublicRoute(http.MethodPost, "/user/create", r.controller.CreateUser)
+	r.server.RegisterPrivateRoute(http.MethodGet, "/user/me", r.controller.Me)
+	r.server.RegisterPrivateRoute(http.MethodGet, "/user/:userID", r.controller.GetUserById)
 }

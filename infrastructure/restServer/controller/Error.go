@@ -8,6 +8,7 @@ import (
 var (
 	ErrURLParamsIsEmpty             = errors.NewError("62106aaa-001", "URL Params is empty")
 	ErrParseURLParams               = errors.NewError("62106aaa-002", "Can't parse URL Params")
+	ErrParseCtxParams               = errors.NewError("62106aaa-004", "Can't parse ctx params")
 	ParameterNotFoundByKeyErrorCode = errors.ErrorCode("62106aaa-003")
 )
 

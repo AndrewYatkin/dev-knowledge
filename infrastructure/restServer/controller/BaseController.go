@@ -3,6 +3,7 @@ package restServerController
 import (
 	"context"
 	"dev-knowledge/infrastructure/errors"
+	"dev-knowledge/infrastructure/jwtService"
 	loggerInterface "dev-knowledge/infrastructure/logger/interface"
 	"dev-knowledge/infrastructure/restServer"
 	restServerInterface "dev-knowledge/infrastructure/restServer/interface"
@@ -54,7 +55,7 @@ func (bc *BaseController) GetReqBody(r *http.Request) ([]byte, error) {
 	return io.ReadAll(r.Body)
 }
 
-func GetRouteParamFromCtx(ctx context.Context, key string) (string, error) {
+func (bc *BaseController) GetRouteParamFromCtx(ctx context.Context, key string) (string, error) {
 	paramsInterface := ctx.Value(restServer.RequestParamsKey)
 	if paramsInterface == nil {
 		return "", ErrURLParamsIsEmpty
@@ -69,6 +70,18 @@ func GetRouteParamFromCtx(ctx context.Context, key string) (string, error) {
 		return "", ErrParameterNotFoundByKey(key)
 	}
 	return val, nil
+}
+
+func (bc *BaseController) GetStrParamFromCtx(ctx context.Context, key jwtService.ContextKey) (string, error) {
+	value := ctx.Value(key)
+	if value == nil {
+		return "", ErrParameterNotFoundByKey(string(key))
+	}
+	valueStr, ok := value.(string)
+	if !ok {
+		return "", ErrParseCtxParams
+	}
+	return valueStr, nil
 }
 
 func (bc *BaseController) Response(w http.ResponseWriter, r *http.Request, result []byte, responseCode int) {

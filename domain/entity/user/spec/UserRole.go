@@ -8,11 +8,13 @@ func (u UserRole) String() string {
 }
 
 const (
+	adminUserRole       = "admin"
 	customerUserRole    = "customer"
 	staffMemberUserRole = "staffMember"
 )
 
 var UserRoles = UserRoleEnum{
+	adminUserRole:       adminUserRole,
 	customerUserRole:    customerUserRole,
 	staffMemberUserRole: staffMemberUserRole,
 }
@@ -23,6 +25,10 @@ func (e UserRoleEnum) Customer() UserRole {
 
 func (e UserRoleEnum) StaffMember() UserRole {
 	return e[staffMemberUserRole]
+}
+
+func (e UserRoleEnum) Admin() UserRole {
+	return e[adminUserRole]
 }
 
 func (e UserRoleEnum) Of(code string) (UserRole, error) {

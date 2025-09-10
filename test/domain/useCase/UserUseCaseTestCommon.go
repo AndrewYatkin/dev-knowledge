@@ -3,6 +3,7 @@ package userUseCaseTest
 import (
 	"context"
 	userUseCase "dev-knowledge/domain/useCase"
+	jwtservice "dev-knowledge/infrastructure/jwtService/test"
 	"dev-knowledge/test/adapters/repository/userRepoMock"
 )
 
@@ -20,6 +21,7 @@ func (c *userUseCaseTestCommon) SetupUseCase() {
 
 	userUC, err := userUseCase.NewBuilder().
 		UserRepo(c.userRepoMock).
+		JwtService(jwtservice.NewJWTServiceMock()).
 		Build()
 	if err != nil {
 		panic(err)

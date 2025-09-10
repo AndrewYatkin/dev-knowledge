@@ -4,7 +4,9 @@ import (
 	"context"
 	userRepo "dev-knowledge/adapters/controllers/repository"
 	userRest "dev-knowledge/adapters/controllers/rest"
+	restResolver "dev-knowledge/adapters/controllers/rest/resolver"
 	userUseCase "dev-knowledge/domain/useCase"
+	jwtservice "dev-knowledge/infrastructure/jwtService"
 	"dev-knowledge/infrastructure/logger"
 	"dev-knowledge/infrastructure/restServer"
 	restServerController "dev-knowledge/infrastructure/restServer/controller"
@@ -17,18 +19,26 @@ const ServicePort = ":8081"
 
 func main() {
 	lightLogger := logger.NewLightLogger()
-	server := restServer.NewFiberServer(lightLogger)
+	jwtService, err := jwtservice.NewBuilder().Secret("1").Build()
+	if err != nil {
+		stopService(lightLogger, err)
+		return
+	}
+	server := restServer.NewFiberServer(lightLogger, jwtService)
 	userRepoDummy, err := userRepo.NewBuilder().Logger(lightLogger).Build()
 	if err != nil {
 		stopService(lightLogger, err)
 		return
 	}
-	useCase, err := userUseCase.NewBuilder().UserRepo(userRepoDummy).Build()
+	useCase, err := userUseCase.NewBuilder().
+		JwtService(jwtService).
+		UserRepo(userRepoDummy).
+		Build()
 	if err != nil {
 		stopService(lightLogger, err)
 		return
 	}
-	errRespService, err := response.NewErrorResponseService(response.NewErrorResolver(), lightLogger)
+	errRespService, err := response.NewErrorResponseService(restResolver.NewErrorResolver(), lightLogger)
 	if err != nil {
 		stopService(lightLogger, err)
 		return

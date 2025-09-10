@@ -2,6 +2,7 @@ package restServer
 
 import (
 	"context"
+	jwtServiceInterface "dev-knowledge/infrastructure/jwtService/interface"
 	loggerInterface "dev-knowledge/infrastructure/logger/interface"
 	restServerInterface "dev-knowledge/infrastructure/restServer/interface"
 	middleware "dev-knowledge/infrastructure/restServer/middleware"
@@ -15,19 +16,21 @@ type ctxKey string
 const RequestParamsKey ctxKey = "requestParams"
 
 type FiberServer struct {
-	server *fiber.App
-	logger loggerInterface.Logger
+	server        *fiber.App
+	logger        loggerInterface.Logger
+	jwtMiddleware fiber.Handler
 }
 
-func NewFiberServer(logger loggerInterface.Logger) restServerInterface.Server {
+func NewFiberServer(logger loggerInterface.Logger, service jwtServiceInterface.JWTService) restServerInterface.Server {
 	server := fiber.New(fiber.Config{
 		ErrorHandler: middleware.NewErrorMiddleware(logger).Handler(),
 	})
 	server.Use(middleware.NewRequestMiddleware(logger).Handler())
 
 	return &FiberServer{
-		server: server,
-		logger: logger,
+		server:        server,
+		logger:        logger,
+		jwtMiddleware: middleware.NewJWTMiddleware(logger, service).Handler(),
 	}
 }
 
@@ -35,16 +38,21 @@ func (s *FiberServer) RegisterPublicRoute(method, path string, handler http.Hand
 	s.registerFiberRoute(method, path, httpHandlerFuncToFiberHandler(handler))
 }
 
-func (s *FiberServer) registerFiberRoute(method, path string, handler fiber.Handler) {
+func (s *FiberServer) RegisterPrivateRoute(method, path string, handler http.HandlerFunc) {
+	fiberHandler := httpHandlerFuncToFiberHandler(handler)
+	s.registerFiberRoute(method, path, s.jwtMiddleware, fiberHandler)
+}
+
+func (s *FiberServer) registerFiberRoute(method, path string, handlers ...fiber.Handler) {
 	switch method {
 	case "GET":
-		s.server.Get(path, handler)
+		s.server.Get(path, handlers...)
 	case "POST":
-		s.server.Post(path, handler)
+		s.server.Post(path, handlers...)
 	case "PUT":
-		s.server.Put(path, handler)
+		s.server.Put(path, handlers...)
 	case "DELETE":
-		s.server.Delete(path, handler)
+		s.server.Delete(path, handlers...)
 	default:
 		panic("Unsupported method")
 	}
@@ -73,7 +81,7 @@ func httpHandlerFuncToFiberHandler(handler http.HandlerFunc) fiber.Handler {
 		}
 
 		params := c.AllParams()
-		ctx := context.WithValue(req.Context(), RequestParamsKey, params)
+		ctx := context.WithValue(c.UserContext(), RequestParamsKey, params)
 		req = req.WithContext(ctx)
 
 		rw := &ResponseWriter{ctx: c}

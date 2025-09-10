@@ -7,5 +7,6 @@ import (
 
 type UserUseCaseInterface interface {
 	Create(ctx context.Context, createData *dto.CreateUserDTO) (*dto.UserResponseDTO, error)
-	GetUserByID(ctx context.Context, userIDStr string) (*dto.UserResponseDTO, error)
+	GetUserByID(ctx context.Context, userIDStr string, executorRole string) (*dto.UserResponseDTO, error)
+	GetMe(ctx context.Context, userIDStr string) (*dto.UserResponseDTO, error)
 }

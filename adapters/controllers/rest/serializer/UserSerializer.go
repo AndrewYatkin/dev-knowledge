@@ -22,6 +22,7 @@ func CreateUserObj(user *dto.UserResponseDTO) *jsonApiModel.JSONApiObject {
 		Attributes: map[string]interface{}{
 			"username": user.Username,
 			"email":    user.Email,
+			"token":    user.Token,
 		},
 		Relationships: jsonApiModel.JSONApiObjectRelationships{},
 	}

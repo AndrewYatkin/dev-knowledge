@@ -2,7 +2,6 @@ package userUseCaseTest
 
 import (
 	"dev-knowledge/boundary/dto"
-	"dev-knowledge/domain/entity/user/spec"
 	userUseCase "dev-knowledge/domain/useCase"
 	"dev-knowledge/infrastructure/errors"
 	commonTesting "dev-knowledge/infrastructure/testing"
@@ -12,55 +11,47 @@ import (
 	"testing"
 )
 
-type UserGetByIDShould struct {
+type UserGetMeShould struct {
 	suite.Suite
 	*userUseCaseTestCommon
 
 	user *dto.UserResponseDTO
 }
 
-func TestUserGetByIDShould(t *testing.T) {
-	suite.Run(t, &UserGetByIDShould{
+func TestUserGetMeShould(t *testing.T) {
+	suite.Run(t, &UserGetMeShould{
 		userUseCaseTestCommon: &userUseCaseTestCommon{},
 	})
 }
 
-func (s *UserGetByIDShould) SetupTest() {
+func (s *UserGetMeShould) SetupTest() {
 	s.SetupUseCase()
 	s.user = stub.GetRandomUserResponseDTO()
 }
 
-func (s *UserGetByIDShould) TestGetByID_EmptyExecutor_ReturnError() {
-	expectedError := userUseCase.ErrPermissionDenied
-	user, err := s.userUseCase.GetUserByID(s.ctx, "123", "")
-
-	assert.Nil(s.T(), user)
-	assert.Equal(s.T(), expectedError, err)
-}
-
-func (s *UserGetByIDShould) TestGetByID_EmptyUserID_ReturnError() {
+func (s *UserGetMeShould) TestGetMe_EmptyUserID_ReturnError() {
 	expectedError := userUseCase.ErrUserIDIsRequired
-	user, err := s.userUseCase.GetUserByID(s.ctx, "", spec.UserRoles.Admin().String())
+	user, err := s.userUseCase.GetMe(s.ctx, "")
 
 	assert.Nil(s.T(), user)
 	assert.Equal(s.T(), expectedError, err)
 }
 
-func (s *UserGetByIDShould) TestGetByID_RepoError_ReturnError() {
+func (s *UserGetMeShould) TestGetMe_RepoError_ReturnError() {
 	expectedUserID := commonTesting.RandomUUID()
 	expectedError := errors.NewError("123", "123")
 	s.userRepoMock.On("GetUserByID", s.ctx, expectedUserID).Return(nil, expectedError)
 
-	user, err := s.userUseCase.GetUserByID(s.ctx, expectedUserID, spec.UserRoles.Admin().String())
+	user, err := s.userUseCase.GetMe(s.ctx, expectedUserID)
 
 	assert.Nil(s.T(), user)
 	assert.Equal(s.T(), expectedError, err)
 }
 
-func (s *UserGetByIDShould) TestGetByID_Valid_ReturnUser() {
+func (s *UserGetMeShould) TestGetMe_Valid_ReturnUser() {
 	expectedUserID := commonTesting.RandomUUID()
 	s.userRepoMock.On("GetUserByID", s.ctx, expectedUserID).Return(s.user, nil)
-	user, err := s.userUseCase.GetUserByID(s.ctx, expectedUserID, spec.UserRoles.Admin().String())
+	user, err := s.userUseCase.GetMe(s.ctx, expectedUserID)
 
 	assert.Nil(s.T(), err)
 	assert.EqualValues(s.T(), s.user, user)
