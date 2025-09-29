@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"dev-knowledge/infrastructure/errors"
-	loggerInterface "dev-knowledge/infrastructure/logger/interface"
+	logInterface "dev-knowledge/infrastructure/logger/interface"
 	restServerInterface "dev-knowledge/infrastructure/restServer/interface"
 	"encoding/json"
 	"fmt"
@@ -13,12 +13,12 @@ import (
 
 type ErrorResponseService struct {
 	errorResolver restServerInterface.ErrorResolver
-	logger        loggerInterface.Logger
+	logger        logInterface.LogPublisher
 }
 
 func NewErrorResponseService(
 	errorResolver restServerInterface.ErrorResolver,
-	logger loggerInterface.Logger,
+	logger logInterface.LogPublisher,
 ) (*ErrorResponseService, error) {
 	if errorResolver == nil {
 		return nil, errors.NewError("SYS", "ErrorResolver is required")
@@ -104,5 +104,5 @@ func (s *ErrorResponseService) prettyJSON(b []byte) ([]byte, error) {
 }
 
 func (s *ErrorResponseService) logError(ctx context.Context, msg string, err error) {
-	s.logger.Error(ctx, fmt.Errorf("%s: %v", msg, err))
+	s.logger.LogError(ctx, fmt.Errorf("%s: %v", msg, err))
 }

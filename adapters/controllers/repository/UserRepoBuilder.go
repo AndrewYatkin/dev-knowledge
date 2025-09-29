@@ -2,7 +2,7 @@ package userRepo
 
 import (
 	"dev-knowledge/infrastructure/errors"
-	loggerInterface "dev-knowledge/infrastructure/logger/interface"
+	logInterface "dev-knowledge/infrastructure/logger/interface"
 )
 
 type Builder struct {
@@ -17,7 +17,7 @@ func NewBuilder() *Builder {
 	}
 }
 
-func (b *Builder) Logger(logger loggerInterface.Logger) *Builder {
+func (b *Builder) Logger(logger logInterface.LogPublisher) *Builder {
 	b.userRepo.logger = logger
 	return b
 }

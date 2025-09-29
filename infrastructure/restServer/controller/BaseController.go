@@ -4,7 +4,7 @@ import (
 	"context"
 	"dev-knowledge/infrastructure/errors"
 	"dev-knowledge/infrastructure/jwtService"
-	loggerInterface "dev-knowledge/infrastructure/logger/interface"
+	logInterface "dev-knowledge/infrastructure/logger/interface"
 	"dev-knowledge/infrastructure/restServer"
 	restServerInterface "dev-knowledge/infrastructure/restServer/interface"
 	"dev-knowledge/infrastructure/restServer/response"
@@ -14,12 +14,12 @@ import (
 
 type BaseController struct {
 	responseService *response.ResponseService
-	logPublisher    loggerInterface.Logger
+	logPublisher    logInterface.LogPublisher
 }
 
 func NewBaseController(
 	responseService *response.ResponseService,
-	logger loggerInterface.Logger,
+	logger logInterface.LogPublisher,
 ) (*BaseController, error) {
 	if responseService == nil {
 		return nil, errors.NewError("SYS", "ResponseService is required")

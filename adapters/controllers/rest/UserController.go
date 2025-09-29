@@ -5,7 +5,7 @@ import (
 	"dev-knowledge/adapters/controllers/rest/serializer"
 	usecaseInterface "dev-knowledge/boundary/domain/usecase"
 	"dev-knowledge/infrastructure/jwtService"
-	loggerInterface "dev-knowledge/infrastructure/logger/interface"
+	logInterface "dev-knowledge/infrastructure/logger/interface"
 	restServerController "dev-knowledge/infrastructure/restServer/controller"
 	"net/http"
 )
@@ -13,7 +13,7 @@ import (
 type UserController struct {
 	*restServerController.BaseController
 	userUseCase usecaseInterface.UserUseCaseInterface
-	logger      loggerInterface.Logger
+	logger      logInterface.LogPublisher
 }
 
 func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {

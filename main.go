@@ -7,27 +7,33 @@ import (
 	restResolver "dev-knowledge/adapters/controllers/rest/resolver"
 	userUseCase "dev-knowledge/domain/useCase"
 	jwtservice "dev-knowledge/infrastructure/jwtService"
-	"dev-knowledge/infrastructure/logger"
+	logInterface "dev-knowledge/infrastructure/logger/interface"
 	"dev-knowledge/infrastructure/restServer"
 	restServerController "dev-knowledge/infrastructure/restServer/controller"
 	"dev-knowledge/infrastructure/restServer/response"
-	init_services "dev-knowledge/init-services"
+	initServices "dev-knowledge/init-services"
 	"fmt"
 )
 
 const ServicePort = ":8081"
+const Environment = "develop"
+const AppID = "example"
+const JWTSecret = "1"
+
+var StopChan = make(chan struct{})
 
 func main() {
-	lightLogger := logger.NewLightLogger()
-	jwtService, err := jwtservice.NewBuilder().Secret("1").Build()
+	initLogger := initServices.NewLoggerInit()
+	logPublisher := initLogger.Init(AppID, Environment, StopChan)
+	jwtService, err := jwtservice.NewBuilder().Secret(JWTSecret).Build()
 	if err != nil {
-		stopService(lightLogger, err)
+		stopService(logPublisher, err)
 		return
 	}
-	server := restServer.NewFiberServer(lightLogger, jwtService)
-	userRepoDummy, err := userRepo.NewBuilder().Logger(lightLogger).Build()
+	server := restServer.NewFiberServer(logPublisher, jwtService)
+	userRepoDummy, err := userRepo.NewBuilder().Logger(logPublisher).Build()
 	if err != nil {
-		stopService(lightLogger, err)
+		stopService(logPublisher, err)
 		return
 	}
 	useCase, err := userUseCase.NewBuilder().
@@ -35,43 +41,43 @@ func main() {
 		UserRepo(userRepoDummy).
 		Build()
 	if err != nil {
-		stopService(lightLogger, err)
+		stopService(logPublisher, err)
 		return
 	}
-	errRespService, err := response.NewErrorResponseService(restResolver.NewErrorResolver(), lightLogger)
+	errRespService, err := response.NewErrorResponseService(restResolver.NewErrorResolver(), logPublisher)
 	if err != nil {
-		stopService(lightLogger, err)
+		stopService(logPublisher, err)
 		return
 	}
-	responseService, err := response.NewResponseService(errRespService, lightLogger)
+	responseService, err := response.NewResponseService(errRespService, logPublisher)
 	if err != nil {
-		stopService(lightLogger, err)
+		stopService(logPublisher, err)
 		return
 	}
-	baseController, err := restServerController.NewBaseController(responseService, lightLogger)
+	baseController, err := restServerController.NewBaseController(responseService, logPublisher)
 	if err != nil {
-		stopService(lightLogger, err)
+		stopService(logPublisher, err)
 		return
 	}
 	userController, err := userRest.NewBuilder().
 		BaseController(baseController).
 		UserUseCase(useCase).
-		Logger(lightLogger).
+		Logger(logPublisher).
 		Build()
 	if err != nil {
-		stopService(lightLogger, err)
+		stopService(logPublisher, err)
 		return
 	}
-	router := init_services.NewUserRouter(server, userController)
+	router := initServices.NewUserRouter(server, userController)
 	router.RegisterRoutes()
 
-	lightLogger.Info(context.Background(), "server is starting...")
+	logPublisher.LogInfo(context.Background(), "server is starting...")
 	if err := server.Start(ServicePort); err != nil {
-		lightLogger.Error(context.Background(), fmt.Errorf("failed to start server: %v", err))
+		logPublisher.LogError(context.Background(), fmt.Errorf("failed to start server: %v", err))
 	}
 }
 
-func stopService(lightLogger *logger.LightLogger, err error) {
-	lightLogger.Error(context.Background(), err)
-	lightLogger.Info(context.Background(), " stopped")
+func stopService(logPublisher logInterface.LogPublisher, err error) {
+	logPublisher.LogError(context.Background(), err)
+	logPublisher.LogInfo(context.Background(), " stopped")
 }

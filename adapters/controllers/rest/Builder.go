@@ -3,7 +3,7 @@ package userRest
 import (
 	usecaseInterface "dev-knowledge/boundary/domain/usecase"
 	"dev-knowledge/infrastructure/errors"
-	loggerInterface "dev-knowledge/infrastructure/logger/interface"
+	logInterface "dev-knowledge/infrastructure/logger/interface"
 	restServerController "dev-knowledge/infrastructure/restServer/controller"
 )
 
@@ -19,7 +19,7 @@ func NewBuilder() *UserControllerBuilder {
 	}
 }
 
-func (b *UserControllerBuilder) Logger(logger loggerInterface.Logger) *UserControllerBuilder {
+func (b *UserControllerBuilder) Logger(logger logInterface.LogPublisher) *UserControllerBuilder {
 	b.controller.logger = logger
 	return b
 }

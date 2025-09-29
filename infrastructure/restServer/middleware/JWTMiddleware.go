@@ -2,16 +2,16 @@ package restMiddleware
 
 import (
 	jwtServiceInterface "dev-knowledge/infrastructure/jwtService/interface"
-	loggerInterface "dev-knowledge/infrastructure/logger/interface"
+	logInterface "dev-knowledge/infrastructure/logger/interface"
 	"github.com/gofiber/fiber/v2"
 )
 
 type JWTMiddleware struct {
-	logger     loggerInterface.Logger
+	logger     logInterface.LogPublisher
 	jwtService jwtServiceInterface.JWTService
 }
 
-func NewJWTMiddleware(logger loggerInterface.Logger, jwtService jwtServiceInterface.JWTService) *JWTMiddleware {
+func NewJWTMiddleware(logger logInterface.LogPublisher, jwtService jwtServiceInterface.JWTService) *JWTMiddleware {
 	return &JWTMiddleware{
 		logger:     logger,
 		jwtService: jwtService,
@@ -31,7 +31,7 @@ func (r *JWTMiddleware) Handler() fiber.Handler {
 
 		ctx, err := r.jwtService.FillCtxWithParams(c.UserContext(), token)
 		if err != nil {
-			r.logger.Error(c.Context(), err)
+			r.logger.LogError(c.Context(), err)
 			return fiber.ErrUnauthorized
 		}
 

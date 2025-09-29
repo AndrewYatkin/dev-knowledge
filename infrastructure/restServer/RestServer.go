@@ -3,7 +3,7 @@ package restServer
 import (
 	"context"
 	jwtServiceInterface "dev-knowledge/infrastructure/jwtService/interface"
-	loggerInterface "dev-knowledge/infrastructure/logger/interface"
+	logInterface "dev-knowledge/infrastructure/logger/interface"
 	restServerInterface "dev-knowledge/infrastructure/restServer/interface"
 	middleware "dev-knowledge/infrastructure/restServer/middleware"
 	"github.com/gofiber/fiber/v2"
@@ -17,11 +17,11 @@ const RequestParamsKey ctxKey = "requestParams"
 
 type FiberServer struct {
 	server        *fiber.App
-	logger        loggerInterface.Logger
+	logger        logInterface.LogPublisher
 	jwtMiddleware fiber.Handler
 }
 
-func NewFiberServer(logger loggerInterface.Logger, service jwtServiceInterface.JWTService) restServerInterface.Server {
+func NewFiberServer(logger logInterface.LogPublisher, service jwtServiceInterface.JWTService) restServerInterface.Server {
 	server := fiber.New(fiber.Config{
 		ErrorHandler: middleware.NewErrorMiddleware(logger).Handler(),
 	})

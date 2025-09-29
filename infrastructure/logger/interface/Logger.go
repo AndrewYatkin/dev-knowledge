@@ -1,8 +1,7 @@
-package loggerInterface
+package logInterface
 
-import "context"
+import loggerModel "dev-knowledge/infrastructure/logger/model"
 
 type Logger interface {
-	Error(ctx context.Context, err ...error)
-	Info(ctx context.Context, messages ...string)
+	LogMsg(data *loggerModel.LogData)
 }

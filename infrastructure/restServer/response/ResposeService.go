@@ -3,7 +3,7 @@ package response
 import (
 	"context"
 	"dev-knowledge/infrastructure/errors"
-	loggerInterface "dev-knowledge/infrastructure/logger/interface"
+	logInterface "dev-knowledge/infrastructure/logger/interface"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -18,12 +18,12 @@ const (
 
 type ResponseService struct {
 	errorResponseService *ErrorResponseService
-	logPublisher         loggerInterface.Logger
+	logPublisher         logInterface.LogPublisher
 }
 
 func NewResponseService(
 	errorResponseService *ErrorResponseService,
-	logger loggerInterface.Logger,
+	logger logInterface.LogPublisher,
 ) (*ResponseService, error) {
 	if logger == nil {
 		return nil, errors.NewError("SYS", "Logger is required")
@@ -94,5 +94,5 @@ func (s *ResponseService) marshalBody(result interface{}) ([]byte, error) {
 }
 
 func (s *ResponseService) logError(ctx context.Context, msg string, err error) {
-	s.logPublisher.Error(ctx, fmt.Errorf("%s: %v", msg, err))
+	s.logPublisher.LogError(ctx, fmt.Errorf("%s: %v", msg, err))
 }
