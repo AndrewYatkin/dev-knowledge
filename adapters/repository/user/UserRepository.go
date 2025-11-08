@@ -3,6 +3,9 @@ package userRepo
 import (
 	"context"
 	userEntity "dev-knowledge/domain/entity/user"
+	logInterface "dev-knowledge/infrastructure/logger/interface"
+	mongoInterface "dev-knowledge/infrastructure/mongo/interface"
+	mongoModel "dev-knowledge/infrastructure/mongo/model"
 )
 
 const (
@@ -10,7 +13,7 @@ const (
 	indexUSerKey = "user_id"
 )
 
-type UserRepo struct {
+type UserRepository struct {
 	mongoRepo      mongoInterface.MongoRepository
 	logPublisher   logInterface.LogPublisher
 	collection     string

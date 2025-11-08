@@ -26,6 +26,13 @@ func NewEmails(email emailPrimitive.Email) (*UserEmails, error) {
 	return emails, nil
 }
 
+func EmailsFrom(notActivatedEmail, activatedEmail *UserEmail) *UserEmails {
+	return &UserEmails{
+		activatedEmail:    activatedEmail,
+		notActivatedEmail: notActivatedEmail,
+	}
+}
+
 func (e *UserEmails) InitNewEmail(newEmail emailPrimitive.Email) error {
 	notActivatedEmail, err := NewBuilder().Email(newEmail).Build()
 	if err != nil {
